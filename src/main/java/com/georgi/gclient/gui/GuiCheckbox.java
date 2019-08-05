@@ -10,15 +10,15 @@ public abstract class GuiCheckbox extends GuiElement {
     private final int TEXT_COLOR = 0xFFEEEEEE;
     private final int BG_COLOR = 0xFF555555;
     private final int OFF_COLOR = 0xFF111111;
-    private final int ON_COLOR = 0xFF22FF22;
+    private final int ON_COLOR = 0xFF18A818;
 
-    protected GuiCheckbox(String name, boolean value) {
-        super(name);
+    protected GuiCheckbox(String name, String description, boolean value) {
+        super(name, description);
         this.value = value;
     }
 
-    protected GuiCheckbox(String name, int x1, int y1, int width, int height, boolean value) {
-        super(name);
+    protected GuiCheckbox(String name, String description, int x1, int y1, int width, int height, boolean value) {
+        super(name, description);
         this.value = value;
         this.x1 = x1;
         this.x2 = x1 + width;
@@ -30,11 +30,6 @@ public abstract class GuiCheckbox extends GuiElement {
 
     @Override
     public void render(Gui gui, FontRenderer font, int mouseX, int mouseY) {
-        if (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0) {
-            System.out.println("Checkbox size 0");
-            return;
-        }
-
         Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
 
         int centerX = x1 + (x2 - x1) / 2;
@@ -49,11 +44,6 @@ public abstract class GuiCheckbox extends GuiElement {
 
         if (value) {
             Gui.drawRect(checkX + 2, checkY + 2, checkX + 8, checkY + 8, ON_COLOR);
-        }
-
-
-        if (mouseX >= x1 && mouseX <= x2 && mouseY >= 1 && mouseY <= y2) {
-            //drawHoveringText(tooltip, mouseX, mouseY);
         }
     }
 

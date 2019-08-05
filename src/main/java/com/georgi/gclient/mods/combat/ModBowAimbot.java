@@ -1,6 +1,7 @@
 package com.georgi.gclient.mods.combat;
 
 import com.georgi.gclient.GClientUtils;
+import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.command.arguments.EntitySelector;
@@ -25,9 +26,17 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_T;
 
 public class ModBowAimbot extends ModBase {
     private boolean isDrawingBow = false;
+    private float targetRange = 120.0f;
 
     public ModBowAimbot() {
         super("BowAimbot", "Bow Aimbot", "Automatically aims for the nearest target when using a bow", "Combat", GLFW_KEY_T);
+        GuiSlider range = new GuiSlider("Target range", "The maximum distance for the aimbot", 1.0f, 120.0f, targetRange){
+            @Override
+            public void onValueChanged() {
+                targetRange = this.value;
+            }
+        };
+        settings.add(range);
     }
 
     @SubscribeEvent
@@ -78,8 +87,8 @@ public class ModBowAimbot extends ModBase {
      * @return
      */
     private EntityLiving findNearestTarget() {
-        BlockPos pos1 = player.getPosition().subtract(new Vec3i(120,60,120));
-        BlockPos pos2 = player.getPosition().add(new Vec3i(120,60,120));
+        BlockPos pos1 = player.getPosition().subtract(new Vec3i(targetRange,targetRange / 2,targetRange));
+        BlockPos pos2 = player.getPosition().add(new Vec3i(targetRange,targetRange / 2,targetRange));
 
         AxisAlignedBB aabb = new AxisAlignedBB(pos1,pos2);
 

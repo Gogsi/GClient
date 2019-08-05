@@ -20,21 +20,21 @@ public class ModGlow extends ModBase {
     public ModGlow() {
         super("Glow", "Glow", "Allows you to see entities through wall", "Visuals",  GLFW_KEY_LEFT_BRACKET);
 
-        GuiCheckbox passive = new GuiCheckbox("Render passive",  true) {
+        GuiCheckbox passive = new GuiCheckbox("Render passive", "Render animals, villagers and other passive mobs", showPassive) {
             @Override
             public void onToggled() {
                 showPassive = value;
             }
         };
         settings.add(passive);
-        GuiCheckbox hostile = new GuiCheckbox("Render hostile",  true) {
+        GuiCheckbox hostile = new GuiCheckbox("Render hostile", "Render zombies, skeletons and other hostiles",  showHostile) {
             @Override
             public void onToggled() {
                 showHostile = value;
             }
         };
         settings.add(hostile);
-        GuiCheckbox players = new GuiCheckbox("Render players",  true) {
+        GuiCheckbox players = new GuiCheckbox("Render players", "Render other players", showPlayers) {
             @Override
             public void onToggled() {
                 showPlayers = value;

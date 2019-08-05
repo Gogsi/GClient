@@ -8,12 +8,12 @@ public abstract class GuiTextButton extends GuiElement {
     private final int TEXT_COLOR = 0xFFEEEEEE;
     private final int BG_COLOR = 0xFF555555;
 
-    protected GuiTextButton(String name) {
-        super(name);
+    protected GuiTextButton(String name, String description) {
+        super(name, description);
     }
 
-    protected GuiTextButton(String name, int x1, int y1, int width, int height){
-        super(name);
+    protected GuiTextButton(String name, String description, int x1, int y1, int width, int height){
+        super(name, description);
 
         this.x1 = x1;
         this.x2 = x1 + width;

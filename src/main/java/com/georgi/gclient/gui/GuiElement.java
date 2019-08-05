@@ -5,14 +5,16 @@ import net.minecraft.client.gui.Gui;
 
 public abstract class GuiElement {
     protected String name;
+    protected String description;
 
     protected int x1 = 0;
     protected int x2 = 0;
     protected int y1 = 0;
     protected int y2 = 0;
 
-    public GuiElement(String name) {
+    public GuiElement(String name, String description) {
         this.name = name;
+        this.description = description;
     }
 
     public abstract void render(Gui gui, FontRenderer font, int mouseX, int mouseY);

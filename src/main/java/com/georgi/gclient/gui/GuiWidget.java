@@ -6,30 +6,36 @@ import net.minecraft.client.gui.Gui;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiWidget extends GuiElement {
+public abstract class GuiWidget extends GuiElement {
 
     private final int TEXT_COLOR = 0xFFEEEEEE;
     private final int BG_COLOR = 0xFF444444;
+    private final int OFF_COLOR = 0xFFA81818;
 
-    private List<GuiElement> children;
+    public List<GuiElement> children;
 
     private boolean isDragging = false;
     private int dragX = 0;
     private int dragY = 0;
 
+    private int closeX1, closeY1;
+
     public GuiWidget(String name) {
-        super(name);
+        super(name, null);
         children = new ArrayList<>();
     }
 
     public GuiWidget(String name, int x1, int y1, int width, int height){
-        super(name);
+        super(name, null);
         children = new ArrayList<>();
 
         this.x1 = x1;
         this.x2 = x1 + width;
         this.y1 = y1;
         this.y2 = y1 + height;
+
+        closeX1 = x2 - 15;
+        closeY1 = y1 + 5;
     }
 
     @Override
@@ -44,6 +50,7 @@ public class GuiWidget extends GuiElement {
         }
 
         Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
+        Gui.drawRect(closeX1, closeY1, closeX1 + 10, closeY1 + 10, OFF_COLOR);
 
         int centerX = x1 + (x2-x1)/2;
         int centerY = y1 + (y2-y1)/2;
@@ -57,10 +64,18 @@ public class GuiWidget extends GuiElement {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
+        if(button == 0 && mouseX >= closeX1 && mouseX <= closeX1 + 10 && mouseY >= closeY1 && mouseY <= closeY1 + 10)
+        {
+            onClose();
+            return true;
+        }
+
         if(button == 0 && mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y1 + 20){
             isDragging = true;
             dragX = (int)mouseX;
             dragY = (int)mouseY;
+
+            return true;
         }
 
         for(GuiElement c : children){
@@ -75,11 +90,17 @@ public class GuiWidget extends GuiElement {
             isDragging = false;
             return true;
         }
+        for(GuiElement c : children){
+            if(c.mouseReleased(mouseX, mouseY, button)) return true;
+        }
         return false;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int mouseBtn, double mouseDX, double mouseDY) {
+        for(GuiElement c : children){
+            if(c.mouseDragged(mouseX, mouseY, mouseBtn, mouseDX, mouseDY)) return true;
+        }
         return false;
     }
 
@@ -91,4 +112,6 @@ public class GuiWidget extends GuiElement {
 
         children.add(el);
     }
+
+    public abstract void onClose();
 }
