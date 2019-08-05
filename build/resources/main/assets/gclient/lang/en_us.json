@@ -1,0 +1,11 @@
+{
+  "key.enableUI": "Open Options",
+  "key.categories.gclient": "GClient",
+
+  "key.enableLJ": "Enable Long Jump",
+  "key.enableHJ": "Enable High Jump",
+  "key.enableSanic" : "Enable Sanic Mode",
+  "key.enableNoFall": "Enable No Fall",
+
+  "key.enableGlow": "Enable Entity Glow"
+}

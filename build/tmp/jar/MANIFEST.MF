@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: Minecraft
+Implementation-Version: 1.0
+Specification-Vendor: hax0rmod
+Specification-Title: hax0rmod
+Implementation-Timestamp: 2019-08-05T15:45:44+0300
+Specification-Version: 1
+Implementation-Vendor: examplemodsareus
+

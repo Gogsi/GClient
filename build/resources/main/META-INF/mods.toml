@@ -1,0 +1,9 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+
+[[mods]]
+modId="gclient"
+version="${file.jarVersion}"
+displayName="GClient"
+authors="Georgi123"
+description="Provides a trainer for single-player and anarchy Minecraft servers."

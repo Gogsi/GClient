@@ -1,0 +1,9 @@
+[{
+  "modid": "gclient",
+  "name": "GClient Mod",
+  "description": "Provides a trainer for single-player and anarchy Minecraft servers.",
+  "version": "1.0.0.0",
+  "mcversion": "1.13.2",
+  "authorList": ["Georgi"],
+  "credits": "I'd like to thank my mother and father."
+}]
