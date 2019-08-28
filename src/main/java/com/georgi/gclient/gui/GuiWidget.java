@@ -47,6 +47,9 @@ public abstract class GuiWidget extends GuiElement {
             }
             dragX = mouseX;
             dragY = mouseY;
+
+            closeX1 = x2 - 15;
+            closeY1 = y1 + 5;
         }
 
         Gui.drawRect(x1, y1, x2, y2, BG_COLOR);

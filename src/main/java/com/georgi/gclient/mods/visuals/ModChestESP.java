@@ -53,26 +53,28 @@ public class ModChestESP extends ModBase {
         Tessellator tessellator = Tessellator.getInstance();
         tessellator.getBuffer().setTranslation(-dx, -dy, -dz);
 
+        GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.lineWidth(Math.max(5.0F, (float)this.mc.mainWindow.getFramebufferWidth() / 1920.0F * 5.0F));
         GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
         GlStateManager.depthMask(false);
         GlStateManager.disableDepthTest();
         GlStateManager.matrixMode(5889);
-        GlStateManager.pushMatrix();
         GlStateManager.scalef(1.0F, 1.0F, 0.999F);
 
         for (AxisAlignedBB pos : chestCpy) {
             event.getContext().drawBoundingBox(pos.minX, pos.minY, pos.minZ, pos.maxX, pos.maxY, pos.maxZ, 0.8f, 0.2f, 0.2f, 1.0f);
         }
 
-        GlStateManager.popMatrix();
         GlStateManager.matrixMode(5888);
         GlStateManager.depthMask(true);
         GlStateManager.enableDepthTest();
         GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
         GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
 
         //Reset rendering origin
         tessellator.getBuffer().setTranslation(0, 0, 0);

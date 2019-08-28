@@ -13,18 +13,19 @@ import java.util.Map;
 public class GClientOptionsGui extends GuiScreen {
 
     GClient mod;
-    ModBase selectedMod = null;
 
     List<GuiCheckbox> modButtons;
     List<GuiTextButton> modSettingButtons;
-    Map<String, GuiWidget> openModSettings;
+
+    //Static so it persists when closing the menu
+    public static Map<String, GuiWidget> openModSettings;
 
     public GClientOptionsGui(GClient mod) {
         super();
         this.mod = mod;
         modButtons = new ArrayList<>();
         modSettingButtons = new ArrayList<>();
-        openModSettings = new HashMap<>();
+        if(openModSettings == null) openModSettings = new HashMap<>();
     }
 
     @Override

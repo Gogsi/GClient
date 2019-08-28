@@ -49,7 +49,7 @@ public class ModBowAimbot extends ModBase {
         }
 
         if(isEnabled && isDrawingBow){
-            EntityLiving nearestEntity = findNearestTarget();
+            EntityLiving nearestEntity = GClientUtils.findNearestTarget(mc, targetRange);
             if(nearestEntity == null) return;
 
             mc.player.lookAt(EntityAnchorArgument.Type.EYES, nearestEntity.getEyePosition(1.0f));
@@ -80,43 +80,6 @@ public class ModBowAimbot extends ModBase {
 
             player.rotationPitch = - (float)pitchAngle; // Minecraft pitch is negative when pointing up
         }
-    }
-
-    /**
-     * Adapted from EntityAiNearestAttackableTarget
-     * @return
-     */
-    private EntityLiving findNearestTarget() {
-        BlockPos pos1 = player.getPosition().subtract(new Vec3i(targetRange,targetRange / 2,targetRange));
-        BlockPos pos2 = player.getPosition().add(new Vec3i(targetRange,targetRange / 2,targetRange));
-
-        AxisAlignedBB aabb = new AxisAlignedBB(pos1,pos2);
-
-        Predicate<? super EntityLiving> targetEntitySelector = (e) -> {
-            if (e == null) {
-                return false;
-            } else {
-                return (EntitySelectors.NOT_SPECTATING.test(e) && EntitySelectors.IS_ALIVE.test(e) && canSee(player, e));
-            }
-        };
-
-        List<EntityLiving> list = mc.world.getEntitiesWithinAABB(EntityLiving.class, aabb, targetEntitySelector);
-        if (list.isEmpty()) {
-            return null;
-        } else {
-            Collections.sort(list, new EntityAINearestAttackableTarget.Sorter(player));
-            return list.get(0);
-        }
-    }
-
-    /**
-     * Adapted from EntityLiving
-     * @param e1
-     * @param e2
-     * @return
-     */
-    public boolean canSee(Entity e1, Entity e2) {
-        return mc.world.rayTraceBlocks(new Vec3d(e1.posX, e1.posY + (double)e1.getEyeHeight(), e1.posZ), new Vec3d(e2.posX, e2.posY + (double)e2.getEyeHeight(), e2.posZ), RayTraceFluidMode.NEVER, true, false) == null;
     }
 
     @SubscribeEvent

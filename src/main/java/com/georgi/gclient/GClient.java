@@ -4,7 +4,10 @@ import com.georgi.gclient.gui.GClientHUD;
 import com.georgi.gclient.gui.GClientOptionsGui;
 import com.georgi.gclient.mods.*;
 
+import com.georgi.gclient.mods.combat.ModAimbot;
 import com.georgi.gclient.mods.combat.ModBowAimbot;
+import com.georgi.gclient.mods.combat.ModKillAura;
+import com.georgi.gclient.mods.combat.ModTriggerbot;
 import com.georgi.gclient.mods.movement.*;
 import com.georgi.gclient.mods.other.ModFreecam;
 import com.georgi.gclient.mods.visuals.ModChestESP;
@@ -42,7 +45,11 @@ public class GClient {
     public ModFreecam freecam;
     public ModChestESP chestESP;
     public ModFullbright fullbright;
+
+    public ModAimbot aimbot;
     public ModBowAimbot bowAimbot;
+    public ModTriggerbot triggerbot;
+    public ModKillAura killaura;
 
     public ArrayList<ModBase> mods;
 
@@ -62,10 +69,14 @@ public class GClient {
         freecam = new ModFreecam();
         chestESP = new ModChestESP();
         fullbright = new ModFullbright();
+
+        aimbot = new ModAimbot();
         bowAimbot = new ModBowAimbot();
+        triggerbot = new ModTriggerbot();
+        killaura = new ModKillAura();
 
         mods = new ArrayList<>();
-        mods.addAll(Arrays.asList(longJump, highJump, fly, speed, glow, noFall, freecam, chestESP, fullbright, bowAimbot));
+        mods.addAll(Arrays.asList(longJump, highJump, fly, speed, glow, noFall, freecam, chestESP, fullbright, aimbot, bowAimbot, triggerbot, killaura));
     }
 
     @SubscribeEvent

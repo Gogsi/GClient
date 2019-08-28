@@ -25,7 +25,12 @@ public class GClientHUD extends Gui {
 
     @SubscribeEvent
     public void speedCheck(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+        mc = Minecraft.getInstance();
+        if (mc.world == null || !mc.world.isRemote()) {
+            return;
+        }
+
+        if (event.phase == TickEvent.Phase.END && mc != null && mc.player != null) {
             double motionX = mc.player.posX - mc.player.prevPosX;
             double motionZ = mc.player.posZ - mc.player.prevPosZ;
 
@@ -33,7 +38,12 @@ public class GClientHUD extends Gui {
             speed = distance * 20;
         }
     }
+
     public void render() {
+        if (mc.world == null || !mc.world.isRemote()) {
+            return;
+        }
+
         width = mc.mainWindow.getScaledWidth();
         height = mc.mainWindow.getScaledHeight();
 
