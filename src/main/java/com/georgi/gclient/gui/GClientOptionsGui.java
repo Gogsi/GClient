@@ -14,18 +14,18 @@ public class GClientOptionsGui extends GuiScreen {
 
     GClient mod;
 
-    List<GuiCheckbox> modButtons;
-    List<GuiTextButton> modSettingButtons;
+    //Static so it persists when closing the menu
+    public List<GuiWidget> categoryWidgets;
 
     //Static so it persists when closing the menu
-    public static Map<String, GuiWidget> openModSettings;
+    private static Map<String, GuiWidget> openModSettings;
 
     public GClientOptionsGui(GClient mod) {
         super();
         this.mod = mod;
-        modButtons = new ArrayList<>();
-        modSettingButtons = new ArrayList<>();
-        if(openModSettings == null) openModSettings = new HashMap<>();
+        categoryWidgets = new ArrayList<>();
+        if (openModSettings == null)
+            openModSettings = new HashMap<>();
     }
 
     @Override
@@ -48,54 +48,86 @@ public class GClientOptionsGui extends GuiScreen {
         int combatY = 25;
         int otherY = 25;
 
+        int movementCnt = 0;
+        int visualsCnt = 0;
+        int combatCnt = 0;
+        int otherCnt = 0;
+
+        GuiWidget movementWidget = new GuiWidget("Movement", movementX, movementY, 100, 10, false) {
+            @Override
+            public void onClose() {
+            }
+        };
+
+        GuiWidget visualsWidget = new GuiWidget("Visuals", visualsX, visualsY, 100, 10, false) {
+            @Override
+            public void onClose() {
+            }
+        };
+
+        GuiWidget combatWidget = new GuiWidget("Combat", combatX, combatY, 100, 10, false) {
+            @Override
+            public void onClose() {
+            }
+        };
+
+        GuiWidget otherWidget = new GuiWidget("Other", otherX, otherY, 100, 10, false) {
+            @Override
+            public void onClose() {
+            }
+        };
+
         for (ModBase hack : mod.mods) {
-            int x, y;
+            int y;
+            GuiWidget widgetCategory;
             switch (hack.category) {
                 case "Visuals":
-                    x = visualsX;
-                    y = visualsY;
-                    visualsY += buttonHeight;
+                    y = (++visualsCnt) * buttonHeight;
+                    widgetCategory = visualsWidget;
                     break;
-
                 case "Movement":
-                    x = movementX;
-                    y = movementY;
-                    movementY += buttonHeight;
+                    y = (++movementCnt) * buttonHeight;
+                    widgetCategory = movementWidget;
                     break;
                 case "Combat":
-                    x = combatX;
-                    y = combatY;
-                    combatY += buttonHeight;
+                    y = (++combatCnt) * buttonHeight;
+                    widgetCategory = combatWidget;
                     break;
                 case "Other":
                 default:
-                    x = otherX;
-                    y = otherY;
-                    otherY += buttonHeight;
-                    break;
-            }
+                    y = (++otherCnt) * buttonHeight;
+                    widgetCategory = otherWidget;
 
-            if (hack.settings != null && hack.settings.size() > 0) {
-                modSettingButtons.add(new GuiTextButton(">", "View mod options", x + buttonWidth, y, buttonHeight / 2, buttonHeight) {
+            }
+            widgetCategory.addChild(new GuiCheckbox(hack.displayName, hack.description, 0, y, buttonWidth, buttonHeight, hack.isEnabled) {
+                @Override
+                public void onToggled() {
+                    hack.toggle();
+                }
+            });
+            if(hack.settings.size() > 0) {
+                widgetCategory.addChild(new GuiTextButton(">", "View mod options", buttonWidth, y, buttonHeight / 2, buttonHeight) {
                     @Override
                     public void onToggled() {
-                        if(openModSettings.containsKey(hack.name)){
+                        if (openModSettings.containsKey(hack.name)) {
                             openModSettings.remove(hack.name);
                             return;
                         }
                         addWidget(hack);
                     }
                 });
-
             }
-
-            modButtons.add(new GuiCheckbox(hack.displayName, hack.description, x, y, buttonWidth, buttonHeight, hack.isEnabled) {
-                @Override
-                public void onToggled() {
-                    hack.toggle();
-                }
-            });
         }
+
+        movementWidget.y2 = movementWidget.y1 + (movementCnt * buttonHeight);
+        combatWidget.y2 = combatWidget.y1 + (combatCnt * buttonHeight);
+        visualsWidget.y2 = visualsWidget.y1 + (visualsCnt * buttonHeight);
+        otherWidget.y2 = otherWidget.y1 + (otherCnt * buttonHeight);
+
+        categoryWidgets.add(movementWidget);
+        categoryWidgets.add(visualsWidget);
+        categoryWidgets.add(combatWidget);
+        categoryWidgets.add(otherWidget);
     }
 
     private void addWidget(ModBase hack) {
@@ -103,7 +135,7 @@ public class GClientOptionsGui extends GuiScreen {
         int x = width / 3 + (openModSettings.values().size() * 20);
         int y = height / 3 + (openModSettings.values().size() * 20);
 
-        GuiWidget widget = new GuiWidget(hack.displayName, x, y, 160, widgetHeight){
+        GuiWidget widget = new GuiWidget(hack.displayName, x, y, 160, widgetHeight, true) {
             @Override
             public void onClose() {
                 openModSettings.remove(hack.name);
@@ -111,7 +143,7 @@ public class GClientOptionsGui extends GuiScreen {
         };
 
         int settingY = 20;
-        for(GuiElement el : hack.settings){
+        for (GuiElement el : hack.settings) {
             el.setSize(0, settingY, 160, 20);
             widget.addChild(el);
             settingY += 20;
@@ -132,54 +164,41 @@ public class GClientOptionsGui extends GuiScreen {
 
         drawCenteredString(font, "GClient 1.0.0", width / 2, 10, 0xFFEEEE22);
 
-        //Draw elements
-        for (GuiCheckbox btn : modButtons) {
-            btn.render(this, font, mouseX, mouseY);
-        }
 
-        for (GuiTextButton btn : modSettingButtons) {
-            btn.render(this, font, mouseX, mouseY);
+        for (GuiWidget w : categoryWidgets) {
+            w.render(this, font, mouseX, mouseY);
         }
-
         for (GuiWidget w : openModSettings.values()) {
             w.render(this, font, mouseX, mouseY);
         }
 
-        //Draw popup
+
         String popup = null;
-        for (GuiCheckbox btn : modButtons) {
-            if(isHoveringOver(btn, mouseX, mouseY)) popup = btn.description;
+        for (GuiWidget w : categoryWidgets) {
+            for (GuiElement el : w.children) {
+                if (isHoveringOver(el, mouseX, mouseY)) popup = el.description;
+            }
         }
-
-        for (GuiTextButton btn : modSettingButtons) {
-            if(isHoveringOver(btn, mouseX, mouseY)) popup = btn.description;
-        }
-
         for (GuiWidget w : openModSettings.values()) {
-            for(GuiElement el : w.children) {
-                if(isHoveringOver(el, mouseX, mouseY)) popup = el.description;
+            for (GuiElement el : w.children) {
+                if (isHoveringOver(el, mouseX, mouseY)) popup = el.description;
             }
         }
 
-        if(popup != null) drawHoveringText(popup, mouseX, mouseY);
+        if (popup != null) drawHoveringText(popup, mouseX, mouseY);
     }
 
-    public boolean isHoveringOver(GuiElement el, int mouseX, int mouseY){
+    public boolean isHoveringOver(GuiElement el, int mouseX, int mouseY) {
         return mouseX >= el.x1 && mouseX <= el.x2 && mouseY >= el.y1 && mouseY <= el.y2 && el.description != null;
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (GuiCheckbox mod : modButtons) {
-            if (mod.mouseClicked(mouseX, mouseY, button)) return true;
+        for (GuiWidget w : categoryWidgets) {
+            if (w.mouseClicked(mouseX, mouseY, button)) return true;
         }
-
-        for (GuiTextButton btn : modSettingButtons) {
-            if (btn.mouseClicked(mouseX, mouseY, button)) return true;
-        }
-
-        for(GuiWidget w : openModSettings.values()){
-            if(w.mouseClicked(mouseX, mouseY, button)) return true;
+        for (GuiWidget w : openModSettings.values()) {
+            if (w.mouseClicked(mouseX, mouseY, button)) return true;
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -187,8 +206,11 @@ public class GClientOptionsGui extends GuiScreen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        for(GuiWidget w : openModSettings.values()){
-            if(w.mouseReleased(mouseX, mouseY, button)) return true;
+        for (GuiWidget w : categoryWidgets) {
+            if (w.mouseReleased(mouseX, mouseY, button)) return true;
+        }
+        for (GuiWidget w : openModSettings.values()) {
+            if (w.mouseReleased(mouseX, mouseY, button)) return true;
         }
 
         return super.mouseReleased(mouseX, mouseY, button);

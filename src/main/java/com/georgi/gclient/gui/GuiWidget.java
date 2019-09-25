@@ -15,19 +15,16 @@ public abstract class GuiWidget extends GuiElement {
     public List<GuiElement> children;
 
     private boolean isDragging = false;
+    private boolean isClosable = false;
     private int dragX = 0;
     private int dragY = 0;
 
     private int closeX1, closeY1;
 
-    public GuiWidget(String name) {
+    public GuiWidget(String name, int x1, int y1, int width, int height, boolean closable){
         super(name, null);
         children = new ArrayList<>();
-    }
-
-    public GuiWidget(String name, int x1, int y1, int width, int height){
-        super(name, null);
-        children = new ArrayList<>();
+        this.isClosable = closable;
 
         this.x1 = x1;
         this.x2 = x1 + width;
@@ -53,7 +50,9 @@ public abstract class GuiWidget extends GuiElement {
         }
 
         Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
-        Gui.drawRect(closeX1, closeY1, closeX1 + 10, closeY1 + 10, OFF_COLOR);
+
+        if(isClosable)
+            Gui.drawRect(closeX1, closeY1, closeX1 + 10, closeY1 + 10, OFF_COLOR);
 
         int centerX = x1 + (x2-x1)/2;
         int centerY = y1 + (y2-y1)/2;
@@ -67,7 +66,7 @@ public abstract class GuiWidget extends GuiElement {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
-        if(button == 0 && mouseX >= closeX1 && mouseX <= closeX1 + 10 && mouseY >= closeY1 && mouseY <= closeY1 + 10)
+        if(isClosable && button == 0 && mouseX >= closeX1 && mouseX <= closeX1 + 10 && mouseY >= closeY1 && mouseY <= closeY1 + 10)
         {
             onClose();
             return true;
