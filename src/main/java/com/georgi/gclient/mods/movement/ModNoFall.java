@@ -3,7 +3,7 @@ package com.georgi.gclient.mods.movement;
 
 import com.georgi.gclient.GClient;
 import com.georgi.gclient.mods.ModBase;
-import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.network.play.client.CPlayerPacket;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -24,7 +24,7 @@ public class ModNoFall extends ModBase {
 
         if (isEnabled) {
             if(player.fallDistance > 2.0f || mod.fly.isEnabled){
-                player.connection.sendPacket(new CPacketPlayer(true)); //Tell the server we are on the ground before we are high enough to take dmg.
+                player.world.sendPacketToServer(new CPlayerPacket(true)); //Tell the server we are on the ground before we are high enough to take dmg.
             }
 
         }

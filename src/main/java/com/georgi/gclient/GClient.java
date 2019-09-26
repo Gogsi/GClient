@@ -92,7 +92,7 @@ public class GClient {
         if (mc.gameSettings.showDebugInfo) return;
 
         if (hud == null) hud = new GClientHUD(mc);
-        hud.render();
+        hud.renderGameOverlay(event.getPartialTicks());
     }
 
     @SubscribeEvent

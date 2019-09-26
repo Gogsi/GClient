@@ -1,16 +1,18 @@
 package com.georgi.gclient.mods.visuals;
 
 import com.georgi.gclient.mods.ModBase;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityMinecartChest;
+import net.minecraft.entity.item.minecart.ChestMinecartEntity;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,32 +48,30 @@ public class ModChestESP extends ModBase {
 
         //Rendering origin is player position. Shifting it to coordinates 0,0,0
         // so we can use the block's coords for the box.
-        double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)event.getPartialTicks();
-        double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)event.getPartialTicks();
-        double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)event.getPartialTicks();
+
+        Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 
         Tessellator tessellator = Tessellator.getInstance();
-        tessellator.getBuffer().setTranslation(-dx, -dy, -dz);
+        tessellator.getBuffer().setTranslation(-projectedView.x, -projectedView.y, - projectedView.z);
 
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.lineWidth(Math.max(5.0F, (float)this.mc.mainWindow.getFramebufferWidth() / 1920.0F * 5.0F));
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.disableLighting();
         GlStateManager.depthMask(false);
         GlStateManager.disableDepthTest();
         GlStateManager.matrixMode(5889);
-        GlStateManager.scalef(1.0F, 1.0F, 0.999F);
 
         for (AxisAlignedBB pos : chestCpy) {
-            event.getContext().drawBoundingBox(pos.minX, pos.minY, pos.minZ, pos.maxX, pos.maxY, pos.maxZ, 0.8f, 0.2f, 0.2f, 1.0f);
+            WorldRenderer.drawBoundingBox(pos.minX, pos.minY, pos.minZ, pos.maxX, pos.maxY, pos.maxZ, 0.8f, 0.2f, 0.2f, 1.0f);
         }
 
         GlStateManager.matrixMode(5888);
         GlStateManager.depthMask(true);
         GlStateManager.enableDepthTest();
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
         GlStateManager.enableLighting();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
@@ -100,23 +100,23 @@ public class ModChestESP extends ModBase {
 
         List<AxisAlignedBB> tempList = new ArrayList<>();
 
-        if(mc == null || mc.world == null || mc.world.loadedEntityList == null) return;
+        if(mc == null || mc.world == null || mc.world.loadedTileEntityList == null) return;
 
         for (TileEntity e : mc.world.loadedTileEntityList) {
-            if(e instanceof TileEntityChest){
-                TileEntityChest c = (TileEntityChest) e;
+            if(e instanceof ChestTileEntity){
+                ChestTileEntity c = (ChestTileEntity) e;
                 tempList.add(new AxisAlignedBB((c.getPos())));
             }
 
-            if(e instanceof TileEntityDispenser || e instanceof TileEntityEnderChest
-               || e instanceof TileEntityFurnace || e instanceof TileEntityHopper){
+            if(e instanceof DispenserTileEntity || e instanceof EnderChestTileEntity
+               || e instanceof FurnaceTileEntity || e instanceof HopperTileEntity){
                 tempList.add(new AxisAlignedBB((e.getPos())));
             }
 
         }
 
-        for(Entity e : mc.world.loadedEntityList){
-            if(e instanceof EntityMinecartChest) {
+        for(Entity e : mc.world.getAllEntities()){
+            if(e instanceof ChestMinecartEntity) {
                 tempList.add(e.getRenderBoundingBox());
             }
         }

@@ -1,16 +1,19 @@
 package com.georgi.gclient;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.command.arguments.EntitySelector;
+import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.util.EntitySelectors;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.util.math.*;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -23,9 +26,7 @@ public final class GClientUtils {
         y = y / scale;
 
         GlStateManager.scalef(scale,scale,scale);
-
         fontRendererIn.drawStringWithShadow(text, x, y, color);
-
         GlStateManager.scalef(originalScale,originalScale,originalScale);
 
     }
@@ -37,9 +38,7 @@ public final class GClientUtils {
         y = y / scale;
 
         GlStateManager.scalef(scale,scale,scale);
-
         fontRendererIn.drawStringWithShadow(text, x, y, color);
-
         GlStateManager.scalef(originalScale,originalScale,originalScale);
 
     }
@@ -47,19 +46,24 @@ public final class GClientUtils {
     public final static void actionBarMsg(String msg) {
         Minecraft mc = Minecraft.getInstance();
         if (!mc.world.isRemote()) return;
-        mc.player.sendStatusMessage(new TextComponentString(msg), true);
+        mc.player.sendStatusMessage(new StringTextComponent(msg), true);
     }
 
     /**
      * Adapted from EntityAiNearestAttackableTarget
      * @return
      */
-    public static EntityLiving findNearestTarget(Minecraft mc, float targetRange) {
-        List<EntityLiving> list = findTargets(mc, targetRange);
+    public static LivingEntity findNearestTarget(Minecraft mc, float targetRange) {
+        List<LivingEntity> list = findTargets(mc, targetRange);
         if (list.isEmpty()) {
             return null;
         } else {
-            Collections.sort(list, new EntityAINearestAttackableTarget.Sorter(mc.player));
+            list.sort((o1, o2) -> {
+                double d1, d2;
+                d1 = mc.player.getPositionVec().distanceTo(o1.getPositionVector());
+                d2 = mc.player.getPositionVec().distanceTo(o2.getPositionVector());
+                return Double.compare(d1, d2);
+            });
             return list.get(0);
         }
     }
@@ -68,24 +72,21 @@ public final class GClientUtils {
      * Adapted from EntityAiNearestAttackableTarget
      * @return
      */
-    public static List<EntityLiving> findTargets(Minecraft mc, float targetRange) {
+    public static List<LivingEntity> findTargets(Minecraft mc, float targetRange) {
         BlockPos pos1 = mc.player.getPosition().subtract(new Vec3i(targetRange, targetRange, targetRange));
         BlockPos pos2 = mc.player.getPosition().add(new Vec3i(targetRange, targetRange, targetRange));
 
         AxisAlignedBB aabb = new AxisAlignedBB(pos1, pos2); // crude filtering on distance, the selector filters more precisely
 
-        Predicate<? super EntityLiving> targetEntitySelector = (e) -> {
-            if (e == null) {
-                return false;
-            } else {
-                return (EntitySelectors.NOT_SPECTATING.test(e)
-                        && EntitySelectors.IS_ALIVE.test(e) && canSee(mc.world, mc.player, e)
-                        && mc.player.getPositionVector().distanceTo(e.getPositionVector()) <= targetRange);
-            }
-        };
+        List<LivingEntity> list = mc.world.getEntitiesWithinAABB(LivingEntity.class, aabb);
+        List<LivingEntity> res = new ArrayList<>();
+        for (LivingEntity entity : list) {
+            if(!entity.equals(mc.player) && entity.isAlive() && entity.attackable() && canSee(mc.world,mc.player,entity)
+                    && mc.player.getPositionVec().distanceTo(entity.getPositionVector()) <= targetRange)
+                res.add(entity);
+        }
 
-        List<EntityLiving> list = mc.world.getEntitiesWithinAABB(EntityLiving.class, aabb, targetEntitySelector);
-        return list;
+        return res;
     }
     /**
      * Adapted from EntityLiving
@@ -93,7 +94,7 @@ public final class GClientUtils {
      * @param e2
      * @return
      */
-    public static boolean canSee(World w, Entity e1, Entity e2) {
-        return w.rayTraceBlocks(new Vec3d(e1.posX, e1.posY + (double)e1.getEyeHeight(), e1.posZ), new Vec3d(e2.posX, e2.posY + (double)e2.getEyeHeight(), e2.posZ), RayTraceFluidMode.NEVER, true, false) == null;
+    public static boolean canSee(World w, LivingEntity e1, LivingEntity e2) {
+        return e1.canEntityBeSeen(e2);
     }
 }

@@ -4,23 +4,14 @@ import com.georgi.gclient.GClientUtils;
 import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
 import net.minecraft.command.arguments.EntityAnchorArgument;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntitySenses;
-import net.minecraft.item.ItemBow;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.*;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BowItem;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_T;
 
@@ -44,12 +35,12 @@ public class ModBowAimbot extends ModBase {
         updateMC();
         if (!verifyLocal() || !verifyLocalPlayer(event.getEntity())) return;
 
-        if(!(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemBow) && isDrawingBow == true){
+        if(!(player.getHeldItem(Hand.MAIN_HAND).getItem() instanceof BowItem) && isDrawingBow == true){
             isDrawingBow = false;
         }
 
         if(isEnabled && isDrawingBow){
-            EntityLiving nearestEntity = GClientUtils.findNearestTarget(mc, targetRange);
+            LivingEntity nearestEntity = GClientUtils.findNearestTarget(mc, targetRange);
             if(nearestEntity == null) return;
 
             mc.player.lookAt(EntityAnchorArgument.Type.EYES, nearestEntity.getEyePosition(1.0f));

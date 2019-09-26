@@ -1,38 +1,27 @@
 package com.georgi.gclient.mods.visuals;
 
-import com.georgi.gclient.GClientUtils;
-import com.georgi.gclient.mods.ModBase;
 import com.georgi.gclient.gui.GuiCheckbox;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.culling.ICamera;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import com.georgi.gclient.mods.ModBase;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.IAnimal;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.world.biome.Biome.LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_BRACKET;
 
 public class ModGlow extends ModBase {
@@ -44,7 +33,7 @@ public class ModGlow extends ModBase {
     private Framebuffer entityOutlineFramebuffer;
     /** Stores the shader group for the entity_outline shader */
     private ShaderGroup entityOutlineShader;
-    private RenderManager renderManager;
+    private EntityRendererManager renderManager;
 
     ScorePlayerTeam passiveTeam;
     ScorePlayerTeam hostileTeam;
@@ -102,8 +91,8 @@ public class ModGlow extends ModBase {
         Entity renderViewEntity = this.mc.getRenderViewEntity();
 
         List<Entity> list = new ArrayList<>();
-        for(Entity e : mc.world.loadedEntityList){
-            if(e instanceof EntityLiving && e != renderViewEntity) {
+        for(Entity e : mc.world.getAllEntities()){
+            if(e instanceof LivingEntity && e != renderViewEntity) {
                 list.add(e);
             }
         }
@@ -118,9 +107,8 @@ public class ModGlow extends ModBase {
         Entity renderViewEntity = this.mc.getRenderViewEntity();
 
         //Get Camera position
-        double dx = renderViewEntity.lastTickPosX + (renderViewEntity.posX - renderViewEntity.lastTickPosX) * (double)partialTicks;
-        double dy = renderViewEntity.lastTickPosY + (renderViewEntity.posY - renderViewEntity.lastTickPosY) * (double)partialTicks;
-        double dz = renderViewEntity.lastTickPosZ + (renderViewEntity.posZ - renderViewEntity.lastTickPosZ) * (double)partialTicks;
+        Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+
 
         //Rerender every entity after enabling outline mode and placing it in the appropriate team for color.
         for(Entity entity : list) {
@@ -131,7 +119,7 @@ public class ModGlow extends ModBase {
             float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks;
 
             //
-            Render<Entity> render = this.renderManager.getEntityRenderObject(entity);
+            EntityRenderer<Entity> render = this.renderManager.getRenderer(entity);
 
             if(render != null) {
                 ScorePlayerTeam oldTeam = (ScorePlayerTeam) entity.getTeam();
@@ -139,10 +127,10 @@ public class ModGlow extends ModBase {
                 if (entity instanceof IMob) {
                     if (!showHostile) continue;
                     mc.world.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), hostileTeam);
-                } else if (entity instanceof IAnimal) {
+                } else if (entity instanceof AnimalEntity) {
                     if (!showPassive) continue;
                     mc.world.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), passiveTeam);
-                } else if (entity instanceof EntityPlayer) {
+                } else if (entity instanceof PlayerEntity) {
                     if (!showPlayers) continue;
                     mc.world.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), playerTeam);
                 } else{
@@ -154,7 +142,7 @@ public class ModGlow extends ModBase {
                 GlStateManager.disableBlend();
 
                 render.setRenderOutlines(true);
-                render.doRender(entity, d0 - dx, d1 - dy, d2 - dz, f, partialTicks);
+                render.doRender(entity, d0 - projectedView.x, d1 - projectedView.y, d2 - projectedView.z, f, partialTicks);
                 render.setRenderOutlines(false);
 
                 GlStateManager.depthMask(true);

@@ -5,11 +5,7 @@ import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.item.ItemBow;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumHand;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.*;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
@@ -44,7 +40,7 @@ public class ModAimbot extends ModBase {
         if (!verifyLocal() || !verifyLocalPlayer(event.getEntity())) return;
 
         if(isEnabled){
-            EntityLiving nearestEntity = GClientUtils.findNearestTarget(mc, targetRange);
+            LivingEntity nearestEntity = GClientUtils.findNearestTarget(mc, targetRange);
             if(nearestEntity == null) return;
 
             mc.player.lookAt(EntityAnchorArgument.Type.EYES, nearestEntity.getEyePosition(1.0f));

@@ -8,12 +8,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class ModFly extends ModBase {
-    private double flySpeed = 0.05f;
+    private float flySpeed = 0.05f;
 
     public ModFly() {
         super("Fly", "Fly", "Allows the player to fly", "Movement", GLFW_KEY_M);
 
-        GuiSlider speed = new GuiSlider("Fly speed", "The top flying speed", 0.1f, 1.0f, (float)flySpeed * 10.0f){
+        GuiSlider speed = new GuiSlider("Fly speed", "The top flying speed", 0.1f, 1.0f, flySpeed * 10.0f){
             @Override
             public void onValueChanged() {
                 flySpeed = this.value / 10.0f;

@@ -3,7 +3,7 @@ package com.georgi.gclient.mods;
 import com.georgi.gclient.GClientUtils;
 import com.georgi.gclient.gui.GuiElement;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public abstract class ModBase {
     protected Minecraft mc;
-    protected EntityPlayerSP player;
+    protected ClientPlayerEntity player;
 
     public String name;
     public String displayName;
