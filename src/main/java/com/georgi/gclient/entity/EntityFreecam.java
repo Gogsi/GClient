@@ -1,18 +1,16 @@
 package com.georgi.gclient.entity;
 
+import com.georgi.gclient.GClientUtils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.MovementInput;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.UUID;
 
 public class EntityFreecam extends PlayerEntity {
-    public MovementInput movementInput;
-    public double freecamSpeed = 10.0f;
-    public double freecamAcceleration = 1.5f;
+    public double freecamSpeed = 0.33f;
 
     public EntityFreecam(World worldIn) {
         super(worldIn, new GameProfile(UUID.randomUUID(), "Freecam"));
@@ -31,34 +29,57 @@ public class EntityFreecam extends PlayerEntity {
 
     @Override
     public void livingTick(){
-        Vec3d motion = getMotion();
         this.noClip = true;
 
-        this.moveStrafing = movementInput.moveStrafe;
-        this.moveForward = movementInput.moveForward;
-
-        if(Math.abs(moveForward) + Math.abs(moveStrafing) > 0.01) {
-
-            setMotion(motion.x * freecamAcceleration, motion.y, motion.z * freecamAcceleration);
-
-            double speedMagnitude = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-
-            if (speedMagnitude > freecamSpeed) {
-                setMotion(motion.x * freecamSpeed / speedMagnitude, motion.y, motion.z * freecamSpeed / speedMagnitude);
-            }
-        } else {
-            setMotion(0,motion.y, 0);
-        }
+        Vec3d motion = getMotion();
 
         Minecraft mc = Minecraft.getInstance();
+        handleMoveInputs(mc);
+
+        if(Math.abs(moveForward) + Math.abs(moveStrafing) > 0.01) {
+            setMotion(0, 0.0d, 0);
+
+            this.moveRelative((float) freecamSpeed, new Vec3d((double) this.moveStrafing, 0.0d, (double) this.moveForward));
+        } else {
+            setMotion(0, 0.0d, 0);
+        }
+
+        motion = getMotion();
+
         if (mc.gameSettings.keyBindJump.isKeyDown())
-            setMotion(motion.x ,motion.y + freecamSpeed / 3.0, motion.z );
+            setMotion(motion.x ,freecamSpeed, motion.z );
 
 
         if (mc.gameSettings.keyBindSneak.isKeyDown())
-            setMotion(motion.x ,motion.y - freecamSpeed / 3.0, motion.z );
+            setMotion(motion.x , -freecamSpeed, motion.z );
 
         super.livingTick();
+    }
+
+    private void handleMoveInputs(Minecraft mc) {
+        if (mc.gameSettings.keyBindForward.isKeyDown())
+        {
+            this.moveForward = 1.0f;
+        }
+        else if (mc.gameSettings.keyBindBack.isKeyDown())
+        {
+            this.moveForward = -1.0f;
+        }
+        else{
+            this.moveForward = 0.0f;
+        }
+
+        if (mc.gameSettings.keyBindLeft.isKeyDown())
+        {
+            this.moveStrafing = 1.0f;
+        }
+        else if (mc.gameSettings.keyBindRight.isKeyDown())
+        {
+            this.moveStrafing = -1.0f;
+        }
+        else{
+            this.moveStrafing = 0.0f;
+        }
     }
 
     @Override

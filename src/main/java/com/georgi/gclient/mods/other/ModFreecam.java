@@ -1,5 +1,6 @@
 package com.georgi.gclient.mods.other;
 
+import com.georgi.gclient.GClientUtils;
 import com.georgi.gclient.entity.EntityFreecam;
 import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
@@ -11,28 +12,17 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
 
 public class ModFreecam extends ModBase {
     EntityFreecam freecam;
-    private float freecamAcceleration = 1.5f;
-    private float freecamSpeed = 1.00F;
+    private float freecamSpeed = 0.33F;
 
     public ModFreecam() {
         super("Freecam", "Freecam", "Allows the player to move his camera without moving the player", "Other", GLFW_KEY_U);
-        GuiSlider acceleration = new GuiSlider("Acceleration factor", "How fast you reach max speed", 1.0f, 5.0f, freecamAcceleration){
+
+        GuiSlider speed = new GuiSlider("Maximum speed", "The top speed", 0.0f, 1.0f, freecamSpeed ){
             @Override
             public void onValueChanged() {
                 freecamSpeed = this.value;
                 if(freecam != null){
                     freecam.freecamSpeed = freecamSpeed;
-                }
-            }
-        };
-        settings.add(acceleration);
-
-        GuiSlider speed = new GuiSlider("Maximum speed", "The top speed", 1.0f, 10.0f, freecamSpeed * 5.0f){
-            @Override
-            public void onValueChanged() {
-                freecamSpeed = this.value / 5.0f;
-                if(freecam != null){
-                    freecam.freecamAcceleration = freecamAcceleration;
                 }
             }
         };
@@ -44,14 +34,15 @@ public class ModFreecam extends ModBase {
         AxisAlignedBB box = mc.player.getBoundingBox();
 
         freecam = new EntityFreecam(mc.world);
-        freecam.freecamAcceleration = freecamAcceleration;
         freecam.freecamSpeed = freecamSpeed;
-        freecam.setPosition(mc.player.posX, mc.player.posY, mc.player.posZ);
+        freecam.copyLocationAndAnglesFrom(mc.player);
         freecam.setBoundingBox(
                 new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ));
+        freecam.inventory.copyInventory(player.inventory);
 
-        mc.world.addEntity(freecam);
+        mc.world.addEntity(freecam.getEntityId(), freecam);
         mc.setRenderViewEntity(freecam);
+
     }
 
     @Override
@@ -69,8 +60,16 @@ public class ModFreecam extends ModBase {
         if(isEnabled && freecam != null){
             freecam.rotationPitch = player.rotationPitch;
             freecam.rotationYaw = player.rotationYaw;
+            freecam.renderYawOffset = player.renderYawOffset;
             freecam.rotationYawHead = player.rotationYawHead;
-            freecam.movementInput = player.movementInput;
+
+            freecam.prevRotationPitch = player.prevRotationPitch;
+            freecam.prevRotationYaw = player.prevRotationYaw;
+            freecam.prevRenderYawOffset = player.prevRenderYawOffset;
+            freecam.prevRotationYawHead = player.prevRotationYawHead;
+
+            freecam.cameraYaw = player.cameraYaw;
+            freecam.prevCameraYaw = player.prevCameraYaw;
 
             mc.setRenderViewEntity(freecam);
         }
