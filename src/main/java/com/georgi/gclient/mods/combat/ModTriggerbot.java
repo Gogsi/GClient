@@ -1,16 +1,11 @@
 package com.georgi.gclient.mods.combat;
 
-import com.georgi.gclient.GClientUtils;
-import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
-import net.minecraft.command.arguments.EntityAnchorArgument;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 
@@ -28,9 +23,12 @@ public class ModTriggerbot extends ModBase {
         if (!verifyLocal() || !verifyLocalPlayer(event.getEntity())) return;
 
         if(isEnabled){
-            if(mc.objectMouseOver != null && mc.objectMouseOver.entity != null && mc.objectMouseOver.entity instanceof EntityLiving){
-                if(mc.player.getCooledAttackStrength(0.0f) > 0.999f)
-                    mc.playerController.attackEntity(mc.player, mc.objectMouseOver.entity);
+            if(mc.objectMouseOver != null && mc.objectMouseOver.getType() == RayTraceResult.Type.ENTITY){
+                EntityRayTraceResult entityRes = (EntityRayTraceResult)mc.objectMouseOver;
+                if(entityRes.getEntity() instanceof LivingEntity) {
+                    if (mc.player.getCooledAttackStrength(0.0f) > 0.999f)
+                        mc.playerController.attackEntity(mc.player, entityRes.getEntity());
+                }
             }
 
         }

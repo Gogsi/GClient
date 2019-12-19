@@ -1,10 +1,8 @@
 package com.georgi.gclient.mods.visuals;
 
 import com.georgi.gclient.mods.ModBase;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Y;
 
@@ -19,17 +17,15 @@ public class ModFullbright extends ModBase {
 
     @Override
     public void onEnabled(){
-        defaultGamma = mc.gameSettings.gammaSetting;
+        defaultGamma = mc.gameSettings.gamma;
     }
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event){
-        if (!isEnabled || event.side != LogicalSide.CLIENT) return;
-
         updateMC();
         if (!verifyLocal()) return;
 
-        if(isEnabled) mc.gameSettings.gammaSetting = 16f;
-        else mc.gameSettings.gammaSetting = defaultGamma;
+        if(isEnabled) mc.gameSettings.gamma = 16f;
+        else mc.gameSettings.gamma = defaultGamma;
     }
 }

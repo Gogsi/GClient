@@ -1,7 +1,8 @@
 package com.georgi.gclient.gui;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 
 public abstract class GuiTextButton extends GuiElement {
 
@@ -22,8 +23,8 @@ public abstract class GuiTextButton extends GuiElement {
     }
 
     @Override
-    public void render(Gui gui, FontRenderer font, int mouseX, int mouseY) {
-        Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
+    public void render(Screen gui, FontRenderer font, int mouseX, int mouseY) {
+        IngameGui.fill(x1, y1, x2, y2, BG_COLOR);
 
         int centerX = x1 + (x2-x1)/2;
         int centerY = y1 + (y2-y1)/2;

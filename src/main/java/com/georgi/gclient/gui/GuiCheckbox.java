@@ -1,8 +1,8 @@
 package com.georgi.gclient.gui;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 
 public abstract class GuiCheckbox extends GuiElement {
     protected boolean value;
@@ -29,8 +29,8 @@ public abstract class GuiCheckbox extends GuiElement {
     private int checkX, checkY;
 
     @Override
-    public void render(Gui gui, FontRenderer font, int mouseX, int mouseY) {
-        Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
+    public void render(Screen gui, FontRenderer font, int mouseX, int mouseY) {
+        IngameGui.fill(x1, y1, x2, y2, BG_COLOR);
 
         int centerX = x1 + (x2 - x1) / 2;
         int centerY = y1 + (y2 - y1) / 2;
@@ -40,10 +40,10 @@ public abstract class GuiCheckbox extends GuiElement {
         checkX = x1 + 5;
         checkY = centerY - 5;
 
-        Gui.drawRect(checkX, checkY, checkX + 10, checkY + 10, OFF_COLOR);
+        IngameGui.fill(checkX, checkY, checkX + 10, checkY + 10, OFF_COLOR);
 
         if (value) {
-            Gui.drawRect(checkX + 2, checkY + 2, checkX + 8, checkY + 8, ON_COLOR);
+            IngameGui.fill(checkX + 2, checkY + 2, checkX + 8, checkY + 8, ON_COLOR);
         }
     }
 
