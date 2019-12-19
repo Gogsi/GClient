@@ -13,6 +13,7 @@ import com.georgi.gclient.mods.other.ModFreecam;
 import com.georgi.gclient.mods.visuals.ModChestESP;
 import com.georgi.gclient.mods.visuals.ModFullbright;
 import com.georgi.gclient.mods.visuals.ModGlow;
+import com.georgi.gclient.mods.visuals.ModXray;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.settings.KeyBinding;
@@ -23,6 +24,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
+import org.spongepowered.asm.launch.MixinBootstrap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,31 +34,37 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSLASH;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("gclient")
-public class GClient {
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+public class GClient{
     private GClientHUD hud;
     private KeyBinding enableUI;
 
-    public ModLongJump longJump;
-    public ModHighJump highJump;
-    public ModFly fly;
-    public ModSpeed speed;
-    public ModGlow glow;
-    public ModNoFall noFall;
-    public ModFreecam freecam;
-    public ModChestESP chestESP;
-    public ModFullbright fullbright;
+    public static ModLongJump longJump;
+    public static ModHighJump highJump;
+    public static ModFly fly;
+    public static ModSpeed speed;
+    public static ModGlow glow;
+    public static ModNoFall noFall;
+    public static ModFreecam freecam;
+    public static ModChestESP chestESP;
+    public static ModFullbright fullbright;
 
-    public ModAimbot aimbot;
-    public ModBowAimbot bowAimbot;
-    public ModTriggerbot triggerbot;
-    public ModKillAura killaura;
+    public static ModAimbot aimbot;
+    public static ModBowAimbot bowAimbot;
+    public static ModTriggerbot triggerbot;
+    public static ModKillAura killaura;
+    public static ModXray xray;
 
-    public ArrayList<ModBase> mods;
+    public static ArrayList<ModBase> mods;
 
-    public GClient() {
-        // Register ourselves for server and other game events we are interested in
+    public GClient(){
+        //MixinBootstrap.init();
+
         MinecraftForge.EVENT_BUS.register(this);
 
+        System.out.println("=== Welcome GClient ===");
+
+        // Register ourselves for game events we are interested in
         enableUI = new KeyBinding("key.enableUI", GLFW_KEY_BACKSLASH, "key.categories.gclient");
         ClientRegistry.registerKeyBinding(enableUI);
 
@@ -74,9 +82,11 @@ public class GClient {
         bowAimbot = new ModBowAimbot();
         triggerbot = new ModTriggerbot();
         killaura = new ModKillAura();
+        xray = new ModXray();
 
         mods = new ArrayList<>();
-        mods.addAll(Arrays.asList(longJump, highJump, fly, speed, glow, noFall, freecam, chestESP, fullbright, aimbot, bowAimbot, triggerbot, killaura));
+        mods.addAll(Arrays.asList(longJump, highJump, fly, speed, glow, noFall, freecam, chestESP, fullbright, aimbot, bowAimbot, triggerbot, killaura, xray));
+
     }
 
     @SubscribeEvent
@@ -97,13 +107,13 @@ public class GClient {
 
     @SubscribeEvent
     @SuppressWarnings("Duplicates")
-    public void onKeyInput(InputEvent.KeyInputEvent event){
-        if(enableUI.isPressed()){
+    public void onKeyInput(InputEvent.KeyInputEvent event) {
+        if (enableUI.isPressed()) {
             Minecraft.getInstance().displayGuiScreen(new GClientOptionsGui(this));
         }
 
-        for(ModBase hack: mods){
-            if(hack.toggleKey.isPressed()){
+        for (ModBase hack : mods) {
+            if (hack.toggleKey.isPressed()) {
                 hack.toggle();
             }
         }

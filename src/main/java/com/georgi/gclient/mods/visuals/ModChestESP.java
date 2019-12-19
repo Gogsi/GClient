@@ -8,8 +8,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
@@ -26,8 +28,8 @@ public class ModChestESP extends ModBase {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
-        updateMC();
         if(!isEnabled) return; //|| !verifyLocal()) return;
+        updateMC();
 
         if (chestList == null) {
             return;
@@ -83,7 +85,7 @@ public class ModChestESP extends ModBase {
     int updateTick = 0;
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event){
-        if(!isEnabled) return;
+        if(!isEnabled || event.side != LogicalSide.CLIENT) return;
         updateMC();
 
         updateTick ++;
