@@ -3,8 +3,7 @@ package com.georgi.gclient.mods.combat;
 import com.georgi.gclient.GClientUtils;
 import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
-import net.minecraft.command.arguments.EntityAnchorArgument;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -33,9 +32,9 @@ public class ModKillAura extends ModBase {
         if (!verifyLocal() || !verifyLocalPlayer(event.getEntity())) return;
 
         if(isEnabled && mc.player.getCooledAttackStrength(0.0f) > 0.999f){
-            List<EntityLiving> targets = GClientUtils.findTargets(mc, targetRange);
+            List<LivingEntity> targets = GClientUtils.findTargets(mc, targetRange);
             if(targets.size() == 0) return;
-            for(EntityLiving e : targets){
+            for(LivingEntity e : targets){
                 mc.playerController.attackEntity(mc.player, e);
             }
         }

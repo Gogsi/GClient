@@ -1,7 +1,8 @@
 package com.georgi.gclient.gui;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 
 public abstract class GuiSlider extends GuiElement {
     private final int TEXT_COLOR = 0xFFEEEEEE;
@@ -35,7 +36,7 @@ public abstract class GuiSlider extends GuiElement {
 
 
     @Override
-    public void render(Gui gui, FontRenderer font, int mouseX, int mouseY) {
+    public void render(Screen gui, FontRenderer font, int mouseX, int mouseY) {
         if(isDragging){
             float newValuePercent = (float) (mouseX - x1) / (x2 - x1);
 
@@ -47,7 +48,7 @@ public abstract class GuiSlider extends GuiElement {
             onValueChanged();
         }
 
-        Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
+        IngameGui.fill(x1, y1, x2, y2, BG_COLOR);
 
         int centerX = x1 + (x2 - x1) / 2;
         int centerY = y1 + (y2 - y1) / 2;
@@ -55,7 +56,7 @@ public abstract class GuiSlider extends GuiElement {
         float valuePercent = (value - minValue) / (maxValue - minValue);
         int valueX = (int)(valuePercent * (x2-x1)) + x1;
 
-        Gui.drawRect(x1, y1, valueX, y2, ON_COLOR);
+        IngameGui.fill(x1, y1, valueX, y2, ON_COLOR);
 
         gui.drawCenteredString(font, name + ": " + String.format("%.2f", value), centerX, centerY - 5, TEXT_COLOR);
 

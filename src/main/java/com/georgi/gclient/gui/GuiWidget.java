@@ -1,7 +1,8 @@
 package com.georgi.gclient.gui;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public abstract class GuiWidget extends GuiElement {
     }
 
     @Override
-    public void render(Gui gui, FontRenderer font, int mouseX, int mouseY) {
+    public void render(Screen gui, FontRenderer font, int mouseX, int mouseY) {
         if(isDragging){
             this.setSize(x1 + (mouseX - dragX), y1 + (mouseY - dragY), getWidth(), getHeight());
             for(GuiElement c : children){
@@ -49,10 +50,10 @@ public abstract class GuiWidget extends GuiElement {
             closeY1 = y1 + 5;
         }
 
-        Gui.drawRect(x1, y1, x2, y2, BG_COLOR);
+        IngameGui.fill(x1, y1, x2, y2, BG_COLOR);
 
         if(isClosable)
-            Gui.drawRect(closeX1, closeY1, closeX1 + 10, closeY1 + 10, OFF_COLOR);
+            IngameGui.fill(closeX1, closeY1, closeX1 + 10, closeY1 + 10, OFF_COLOR);
 
         int centerX = x1 + (x2-x1)/2;
         int centerY = y1 + (y2-y1)/2;

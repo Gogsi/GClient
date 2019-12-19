@@ -1,7 +1,8 @@
 package com.georgi.gclient.gui;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 
 public abstract class GuiElement {
     protected String name;
@@ -17,7 +18,7 @@ public abstract class GuiElement {
         this.description = description;
     }
 
-    public abstract void render(Gui gui, FontRenderer font, int mouseX, int mouseY);
+    public abstract void render(Screen gui, FontRenderer font, int mouseX, int mouseY);
     public abstract boolean mouseClicked(double mouseX, double mouseY, int button);
     public abstract boolean mouseReleased(double mouseX, double mouseY, int button);
     public abstract boolean mouseDragged(double mouseX, double mouseY, int mouseBtn, double mouseDX, double mouseDY) ;

@@ -1,15 +1,18 @@
 package com.georgi.gclient.gui;
 
 import com.georgi.gclient.GClientUtils;
+import com.sun.java.accessibility.util.java.awt.TextComponentTranslator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IRenderable;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-public class GClientHUD extends Gui {
+public class GClientHUD extends IngameGui {
     private int width;
     private int height;
     private Minecraft mc;
@@ -17,6 +20,7 @@ public class GClientHUD extends Gui {
     private double speed = 0.0;
 
     public GClientHUD(Minecraft mc) {
+        super(mc);
         MinecraftForge.EVENT_BUS.register(this);
         this.mc = mc;
         width = mc.mainWindow.getScaledWidth();
@@ -39,7 +43,8 @@ public class GClientHUD extends Gui {
         }
     }
 
-    public void render() {
+    @Override
+    public void renderGameOverlay(float partialTicks) {
         if (mc.world == null || !mc.world.isRemote()) {
             return;
         }

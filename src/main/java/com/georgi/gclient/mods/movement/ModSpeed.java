@@ -3,6 +3,7 @@ package com.georgi.gclient.mods.movement;
 import com.georgi.gclient.gui.GuiCheckbox;
 import com.georgi.gclient.gui.GuiSlider;
 import com.georgi.gclient.mods.ModBase;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -49,14 +50,14 @@ public class ModSpeed extends ModBase {
         if(isEnabled && player.onGround && Math.abs(player.moveForward) + Math.abs(player.moveStrafing) > 0.01){
             if(autoSprint || !player.isSprinting()) player.setSprinting(true);
 
-            player.motionX *= modAcceleration;
-            player.motionZ *= modAcceleration;
+            Vec3d motion = player.getMotion();
 
-            double speedMagnitude = Math.sqrt(player.motionX * player.motionX + player.motionZ * player.motionZ);
+            player.setMotion(motion.x * modAcceleration, motion.y, motion.z * modAcceleration);
+
+            double speedMagnitude = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
 
             if(speedMagnitude > maxSpeed){
-                player.motionX *= maxSpeed / speedMagnitude;
-                player.motionZ *= maxSpeed / speedMagnitude;
+                player.setMotion(motion.x * maxSpeed / speedMagnitude, motion.y, motion.z * maxSpeed / speedMagnitude);
             }
 
         }

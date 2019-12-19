@@ -4,13 +4,15 @@ import com.georgi.gclient.GClient;
 import com.georgi.gclient.mods.ModBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GClientOptionsGui extends GuiScreen {
+public class GClientOptionsGui extends Screen {
 
     GClient mod;
 
@@ -21,7 +23,7 @@ public class GClientOptionsGui extends GuiScreen {
     private static Map<String, GuiWidget> openModSettings;
 
     public GClientOptionsGui(GClient mod) {
-        super();
+        super(new TranslationTextComponent("Options"));
         this.mod = mod;
         categoryWidgets = new ArrayList<>();
         if (openModSettings == null)
@@ -30,8 +32,8 @@ public class GClientOptionsGui extends GuiScreen {
 
     @Override
     @SuppressWarnings("Duplicates")
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         this.buttons.clear();
         this.children.clear();
 
@@ -157,8 +159,8 @@ public class GClientOptionsGui extends GuiScreen {
     public void render(int mouseX, int mouseY, float partialTicks) {
         FontRenderer font = Minecraft.getInstance().fontRenderer;
 
-        this.drawDefaultBackground();
-        drawRect(0, 0, width, 3 * height / 8, Integer.MIN_VALUE);
+        this.renderBackground();
+        fill(0, 0, width, 3 * height / 8, Integer.MIN_VALUE);
 
         super.render(mouseX, mouseY, partialTicks);
 
@@ -185,7 +187,7 @@ public class GClientOptionsGui extends GuiScreen {
             }
         }
 
-        if (popup != null) drawHoveringText(popup, mouseX, mouseY);
+        if (popup != null) renderTooltip(popup, mouseX, mouseY);
     }
 
     public boolean isHoveringOver(GuiElement el, int mouseX, int mouseY) {
@@ -225,8 +227,4 @@ public class GClientOptionsGui extends GuiScreen {
         return super.mouseDragged(mouseX, mouseY, mouseBtn, mouseDX, mouseDY);
     }
 
-    @Override
-    public void close() {
-        super.close();
-    }
 }
