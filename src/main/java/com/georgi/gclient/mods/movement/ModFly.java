@@ -32,7 +32,7 @@ public class ModFly extends ModBase {
             player.abilities.setFlySpeed(flySpeed);
         }else{
             player.abilities.allowFlying = false;
-
+            player.abilities.isFlying = false;
         }
     }
 }

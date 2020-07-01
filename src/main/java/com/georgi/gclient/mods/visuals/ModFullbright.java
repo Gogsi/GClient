@@ -20,12 +20,16 @@ public class ModFullbright extends ModBase {
         defaultGamma = mc.gameSettings.gamma;
     }
 
+    @Override
+    public void onDisabled(){
+        mc.gameSettings.gamma = defaultGamma;
+    }
+
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event){
         updateMC();
         if (!verifyLocal()) return;
 
         if(isEnabled) mc.gameSettings.gamma = 16f;
-        else mc.gameSettings.gamma = defaultGamma;
     }
 }

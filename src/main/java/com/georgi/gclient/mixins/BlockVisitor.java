@@ -29,13 +29,5 @@ public class BlockVisitor {
         }
     }
 
-    // Makes the ores fully lit
-    @Inject(method = "getAmbientOcclusionLightValue(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;)F",
-            at = @At("HEAD"), cancellable = true)
-    private void getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos, CallbackInfoReturnable<Float> cir) {
-        if (GClient.xray.isEnabled) {
-            cir.setReturnValue(1.0f);
-        }
-    }
 }
 
