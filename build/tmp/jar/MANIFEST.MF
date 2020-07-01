@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
-Implementation-Title: Minecraft
-Implementation-Version: 1.0
-Specification-Vendor: hax0rmod
-Specification-Title: hax0rmod
-Implementation-Timestamp: 2019-08-05T15:45:44+0300
+Implementation-Title: GClient
+Implementation-Version: 1.01
+Specification-Vendor: 
+Specification-Title: gclient
+Implementation-Timestamp: 2019-12-21T16:32:41+0100
+MixinConnector: com.georgi.gclient.MixinConfig
 Specification-Version: 1
-Implementation-Vendor: examplemodsareus
+Implementation-Vendor: 
 

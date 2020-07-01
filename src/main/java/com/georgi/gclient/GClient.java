@@ -58,11 +58,12 @@ public class GClient{
     public static ArrayList<ModBase> mods;
 
     public GClient(){
-        //MixinBootstrap.init();
+        MixinBootstrap.init();
 
         MinecraftForge.EVENT_BUS.register(this);
 
         System.out.println("=== Welcome GClient ===");
+        System.out.println("Minecraft: 1.14.4");
 
         // Register ourselves for game events we are interested in
         enableUI = new KeyBinding("key.enableUI", GLFW_KEY_BACKSLASH, "key.categories.gclient");

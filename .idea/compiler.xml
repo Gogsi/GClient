@@ -6,6 +6,8 @@
       <module name="com.georgi.hax0rmod.Minecraft.test" target="1.8" />
       <module name="com.yourname.modid.Minecraft.main" target="1.8" />
       <module name="com.yourname.modid.Minecraft.test" target="1.8" />
+      <module name="GClient.main" target="1.8" />
+      <module name="GClient.test" target="1.8" />
       <module name="Minecraft.main" target="1.8" />
       <module name="Minecraft.test" target="1.8" />
     </bytecodeTargetLevel>

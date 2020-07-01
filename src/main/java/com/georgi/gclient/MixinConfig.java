@@ -8,6 +8,7 @@ public class MixinConfig implements IMixinConnector {
     @Override
     public void connect() {
         //MixinBootstrap.init();
+        System.out.println("GClient Mixins loaded");
        Mixins.addConfiguration("mixins.gclient.json");
     }
     ///Mixin

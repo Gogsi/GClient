@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GClient.iml" filepath="$PROJECT_DIR$/.idea/modules/GClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GClient.main.iml" filepath="$PROJECT_DIR$/.idea/modules/GClient.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GClient.test.iml" filepath="$PROJECT_DIR$/.idea/modules/GClient.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/Minecraft.iml" filepath="$PROJECT_DIR$/Minecraft.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Minecraft.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Minecraft.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Minecraft.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Minecraft.test.iml" />
     </modules>
   </component>
 </project>
